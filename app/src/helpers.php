@@ -103,3 +103,14 @@ function field_feedback(string $field): string
     $error = field_error($field);
     return $error === '' ? '' : '<div class="invalid-feedback d-block">' . e($error) . '</div>';
 }
+
+/** One or two letters for a user avatar: "Олексій" -> "О", "Kate Ivanova" -> "KI". */
+function user_initials(string $name): string
+{
+    $parts = preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: ['?'];
+    $initials = mb_strtoupper(mb_substr($parts[0], 0, 1));
+    if (count($parts) > 1) {
+        $initials .= mb_strtoupper(mb_substr($parts[count($parts) - 1], 0, 1));
+    }
+    return $initials;
+}

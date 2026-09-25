@@ -21,10 +21,12 @@ final class SupplierController extends Controller
 {
     private const BASE = '/settings/suppliers';
 
+    private const FIELDS = ['name', 'tax_id', 'phone', 'email', 'street', 'postal_code', 'city', 'country_code'];
+
     public function index(Request $request): string
     {
         $suppliers = Database::fetchAll(
-            'SELECT s.id, s.name, s.tax_id, s.contact, s.is_active,
+            'SELECT s.id, s.name, s.tax_id, s.phone, s.email, s.is_active,
                     (SELECT COUNT(*) FROM batches b WHERE b.supplier_id = s.id AND b.deleted_at IS NULL) AS batches_count
                FROM suppliers s
               WHERE s.deleted_at IS NULL
@@ -57,11 +59,12 @@ final class SupplierController extends Controller
         }
 
         Database::query(
-            'INSERT INTO suppliers (name, tax_id, contact) VALUES (?, ?, ?)',
-            [$data['name'], $data['tax_id'], $data['contact']]
+            'INSERT INTO suppliers (name, tax_id, phone, email, street, postal_code, city, country_code)
+             VALUES (:name, :tax_id, :phone, :email, :street, :postal_code, :city, :country_code)',
+            $data
         );
         $id = Database::lastInsertId();
-        ActivityLog::log('create', 'supplier', $id, $this->changes([], $data, ['name', 'tax_id', 'contact']));
+        ActivityLog::log('create', 'supplier', $id, $this->changes([], $data, self::FIELDS));
 
         Session::flash('success', t('suppliers.created', ['name' => $data['name']]));
         return Response::redirect(url(self::BASE));
@@ -75,11 +78,14 @@ final class SupplierController extends Controller
             return $this->backWithErrors(url(self::BASE . '/' . $id . '/edit'), $errors, $request->all());
         }
 
-        $changes = $this->changes($supplier, $data, ['name', 'tax_id', 'contact']);
+        $changes = $this->changes($supplier, $data, self::FIELDS);
         if ($changes !== []) {
             Database::query(
-                'UPDATE suppliers SET name = ?, tax_id = ?, contact = ? WHERE id = ?',
-                [$data['name'], $data['tax_id'], $data['contact'], $id]
+                'UPDATE suppliers
+                    SET name = :name, tax_id = :tax_id, phone = :phone, email = :email,
+                        street = :street, postal_code = :postal_code, city = :city, country_code = :country_code
+                  WHERE id = :id',
+                $data + ['id' => $id]
             );
             ActivityLog::log('update', 'supplier', $id, $changes);
         }
@@ -108,6 +114,7 @@ final class SupplierController extends Controller
             'activePath'  => self::BASE,
             'breadcrumbs' => [[t('menu.suppliers'), url(self::BASE)]],
             'supplier'    => $supplier,
+            'countries'   => require APP_ROOT . '/config/countries.php',
             'action'      => url($isNew ? self::BASE : self::BASE . '/' . $supplier['id']),
             'backUrl'     => url(self::BASE),
         ]);
@@ -116,7 +123,8 @@ final class SupplierController extends Controller
     private function find(int $id): array
     {
         $supplier = Database::fetch(
-            'SELECT id, name, tax_id, contact, is_active FROM suppliers WHERE id = ? AND deleted_at IS NULL',
+            'SELECT id, name, tax_id, phone, email, street, postal_code, city, country_code, is_active
+               FROM suppliers WHERE id = ? AND deleted_at IS NULL',
             [$id]
         );
         if ($supplier === null) {
@@ -128,10 +136,18 @@ final class SupplierController extends Controller
     /** @return array{0: array, 1: array} [data, errors] */
     private function validated(Request $request, ?int $ignoreId): array
     {
-        $name    = preg_replace('/\s+/u', ' ', $request->input('name')) ?? '';
-        $taxId   = $request->input('tax_id');
-        $contact = $request->input('contact');
-        $errors  = [];
+        $clean = static fn (string $v): string => preg_replace('/\s+/u', ' ', $v) ?? '';
+
+        $name       = $clean($request->input('name'));
+        $taxId      = $request->input('tax_id');
+        $phone      = $clean($request->input('phone'));
+        $email      = $request->input('email');
+        $street     = $clean($request->input('street'));
+        $postalCode = strtoupper($clean($request->input('postal_code')));
+        $city       = $clean($request->input('city'));
+        $country    = strtoupper($request->input('country_code', 'PL'));
+        $countries  = require APP_ROOT . '/config/countries.php';
+        $errors     = [];
 
         if ($name === '') {
             $errors['name'] = t('validation.required');
@@ -152,14 +168,45 @@ final class SupplierController extends Controller
             }
         }
 
-        if (!Validate::maxLength($contact, 255)) {
-            $errors['contact'] = t('validation.max_length', ['max' => 255]);
+        if ($phone !== '' && !preg_match('/^\+?[0-9 ()\-]{5,30}$/', $phone)) {
+            $errors['phone'] = t('suppliers.invalid_phone');
         }
 
+        if ($email !== '' && (filter_var($email, FILTER_VALIDATE_EMAIL) === false || !Validate::maxLength($email, 150))) {
+            $errors['email'] = t('suppliers.invalid_email');
+        }
+
+        if (!Validate::maxLength($street, 200)) {
+            $errors['street'] = t('validation.max_length', ['max' => 200]);
+        }
+
+        if (!isset($countries[$country])) {
+            $errors['country_code'] = t('suppliers.invalid_country');
+        }
+
+        if ($postalCode !== '') {
+            if ($country === 'PL' && !preg_match('/^\d{2}-\d{3}$/', $postalCode)) {
+                $errors['postal_code'] = t('suppliers.invalid_postal_code_pl');
+            } elseif (!preg_match('/^[A-Z0-9 \-]{2,12}$/', $postalCode)) {
+                $errors['postal_code'] = t('suppliers.invalid_postal_code');
+            }
+        }
+
+        if (!Validate::maxLength($city, 100)) {
+            $errors['city'] = t('validation.max_length', ['max' => 100]);
+        }
+
+        $orNull = static fn (string $v): ?string => $v !== '' ? $v : null;
+
         return [[
-            'name'    => $name,
-            'tax_id'  => $normalizedNip,
-            'contact' => $contact !== '' ? $contact : null,
+            'name'         => $name,
+            'tax_id'       => $normalizedNip,
+            'phone'        => $orNull($phone),
+            'email'        => $orNull(mb_strtolower($email)),
+            'street'       => $orNull($street),
+            'postal_code'  => $orNull($postalCode),
+            'city'         => $orNull($city),
+            'country_code' => $country,
         ], $errors];
     }
 }

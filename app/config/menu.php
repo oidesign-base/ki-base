@@ -5,17 +5,10 @@
  * Each group = one rail icon + one list in the panel.
  * Labels are translation keys (app/lang/uk.php); icons are Phosphor class names.
  * 'position' => 'bottom' puts the rail icon at the bottom of the rail.
+ * The dashboard has no menu item: it opens from the house icon at the top of the rail.
  */
 
 return [
-    [
-        'key'   => 'home',
-        'label' => 'menu.group.home',
-        'icon'  => 'ph-house-simple',
-        'items' => [
-            ['path' => '/', 'label' => 'menu.dashboard', 'icon' => 'ph-squares-four'],
-        ],
-    ],
     [
         'key'   => 'stock',
         'label' => 'menu.group.stock',

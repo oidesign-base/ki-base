@@ -30,6 +30,7 @@
       new DataTable(table, {
         language: uk,
         order: [],
+        autoWidth: false,
         pageLength: parseInt(table.getAttribute("data-page-length") || "25", 10)
       });
     });

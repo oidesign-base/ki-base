@@ -121,10 +121,133 @@
     });
   }
 
+  // ---------------------------------------------------------------
+  // Copy a table cell (tables with [data-copy]; cells with
+  // [data-no-copy] are skipped, [data-copy-value] overrides the text).
+  //   Desktop: copy icon appears on hover, click copies.
+  //   Touch:   long press (0.55 s) on the cell copies.
+  // ---------------------------------------------------------------
+  function initCopyCells() {
+    var CELL = "table[data-copy] tbody td:not([data-no-copy])";
+    var toastTimer = null;
+
+    function cellText(td) {
+      if (td.hasAttribute("data-copy-value")) return td.getAttribute("data-copy-value");
+      return (td.innerText || "").replace(/\s+/g, " ").trim();
+    }
+
+    function writeClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function (resolve, reject) {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand("copy") ? resolve() : reject(); } catch (e) { reject(e); }
+        document.body.removeChild(ta);
+      });
+    }
+
+    function toast(message) {
+      var el = document.querySelector(".copy-toast");
+      if (!el) {
+        el = document.createElement("div");
+        el.className = "copy-toast bg-neutral-900 text-white radius-8 px-16 py-8 text-sm fw-medium";
+        el.setAttribute("role", "status");
+        document.body.appendChild(el);
+      }
+      el.textContent = message;
+      el.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { el.hidden = true; }, 1400);
+    }
+
+    function copyCell(td) {
+      var text = cellText(td);
+      if (text === "") return;
+      writeClipboard(text).then(function () {
+        td.classList.add("copy-flash");
+        setTimeout(function () { td.classList.remove("copy-flash"); }, 400);
+        toast(document.body.getAttribute("data-i18n-copied") || "Copied");
+      }).catch(function () {});
+    }
+
+    // Desktop: add the icon lazily when the pointer enters a cell.
+    document.addEventListener("mouseover", function (e) {
+      var td = e.target.closest(CELL);
+      if (!td || td.classList.contains("copyable") || cellText(td) === "") return;
+      td.classList.add("copyable");
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "copy-cell-btn";
+      btn.setAttribute("aria-label", document.body.getAttribute("data-i18n-copy") || "Copy");
+      btn.innerHTML = '<i class="ph ph-copy"></i>';
+      td.appendChild(btn);
+    });
+
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest(".copy-cell-btn");
+      if (!btn) return;
+      e.preventDefault();
+      copyCell(btn.closest("td"));
+    });
+
+    // Touch: long press.
+    var pressTimer = null, startX = 0, startY = 0, pressedTd = null, suppressClick = false;
+
+    document.addEventListener("touchstart", function (e) {
+      var td = e.target.closest(CELL);
+      if (!td || e.touches.length !== 1) return;
+      pressedTd = td;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      td.classList.add("copyable");
+      pressTimer = setTimeout(function () {
+        suppressClick = true;
+        copyCell(pressedTd);
+      }, 550);
+    }, { passive: true });
+
+    function cancelPress() {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    }
+
+    document.addEventListener("touchmove", function (e) {
+      if (!pressTimer) return;
+      var t = e.touches[0];
+      if (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) cancelPress();
+    }, { passive: true });
+
+    document.addEventListener("touchend", cancelPress);
+    document.addEventListener("touchcancel", cancelPress);
+
+    // A long press must not also follow a link inside the cell.
+    document.addEventListener("click", function (e) {
+      if (suppressClick) {
+        suppressClick = false;
+        if (e.target.closest(CELL)) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    }, true);
+
+    document.addEventListener("contextmenu", function (e) {
+      if (e.target.closest(CELL) && window.matchMedia("(hover: none)").matches) e.preventDefault();
+    });
+  }
+
   ready(function () {
     initTwinSidebar();
     initThemeToggle();
     initPasswordToggle();
     initAlerts();
+    initCopyCells();
   });
 })();

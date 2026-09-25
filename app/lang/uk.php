@@ -5,7 +5,6 @@
 
 return [
     // Menu
-    'menu.group.home'     => 'Головна',
     'menu.group.stock'    => 'Облік',
     'menu.group.sales'    => 'Продажі',
     'menu.group.labels'   => 'Наклейки',
@@ -32,10 +31,12 @@ return [
     // Layout
     'layout.home'            => 'Головна',
     'layout.open_menu'       => 'Відкрити меню',
-    'layout.collapse_menu'   => 'Згорнути меню',
+    'layout.collapse_menu'   => 'Згорнути або розгорнути меню',
+    'layout.expand_menu'     => 'Розгорнути меню',
+    'layout.menu'            => 'Меню',
+    'layout.breadcrumb'      => 'Навігація',
     'layout.theme'           => 'Світла / темна тема',
     'layout.logout'          => 'Вийти',
-    'layout.footer'          => 'Панель обліку товарів',
 
     // Login
     'auth.login.title'    => 'Вхід',
@@ -91,6 +92,8 @@ return [
     'action.disable'         => 'Вимкнути',
     'action.save'            => 'Зберегти',
     'action.cancel'          => 'Скасувати',
+    'action.copy'            => 'Копіювати',
+    'action.copied'          => 'Скопійовано',
     'form.check_fields'      => 'Перевірте виділені поля.',
     'validation.required'    => 'Обов\'язкове поле.',
     'validation.max_length'  => 'Не більше {max} символів.',
@@ -114,8 +117,14 @@ return [
     'suppliers.edit'                => 'Редагування постачальника',
     'suppliers.name'                => 'Назва',
     'suppliers.tax_id'              => 'NIP',
-    'suppliers.contact'             => 'Контакт',
-    'suppliers.contact_placeholder' => 'Телефон, e-mail або сайт',
+    'suppliers.phone'               => 'Телефон',
+    'suppliers.email'               => 'E-mail',
+    'suppliers.address'             => 'Адреса',
+    'suppliers.street'              => 'Вулиця, будинок, квартира',
+    'suppliers.street_placeholder'  => 'ul. Przykładowa 5/2',
+    'suppliers.postal_code'         => 'Поштовий індекс',
+    'suppliers.city'                => 'Місто',
+    'suppliers.country'             => 'Країна',
     'suppliers.batches_count'       => 'Партій',
     'suppliers.created'             => 'Постачальника «{name}» додано.',
     'suppliers.updated'             => 'Постачальника «{name}» збережено.',
@@ -123,6 +132,11 @@ return [
     'suppliers.disabled'            => 'Постачальника «{name}» вимкнено: його не буде в списках вибору, але наявні партії його зберігають.',
     'suppliers.duplicate'           => 'Постачальник з такою назвою вже є.',
     'suppliers.invalid_nip'         => 'Невірний NIP: має бути 10 цифр із правильною контрольною цифрою.',
+    'suppliers.invalid_phone'       => 'Лише цифри, пробіли, дужки, дефіс і + на початку (5–30 символів).',
+    'suppliers.invalid_email'       => 'Невірна адреса e-mail.',
+    'suppliers.invalid_postal_code_pl' => 'Польський індекс має формат 00-000.',
+    'suppliers.invalid_postal_code' => 'Невірний поштовий індекс.',
+    'suppliers.invalid_country'     => 'Виберіть країну зі списку.',
 
     // Errors
     'error.403.title' => 'Доступ заборонено',

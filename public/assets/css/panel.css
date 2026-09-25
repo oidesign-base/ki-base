@@ -1,12 +1,231 @@
 /*
- * KI-BASE panel: small additions on top of the template style.css.
- * Keep this file minimal — the design comes from the template.
+ * KI-BASE panel: additions and agreed deviations on top of the template style.css.
+ * Keep this file small — the design comes from the template. Every block below
+ * is a deliberate change agreed with the owner (see LOG.md, 25.09).
  */
 
-/* Logout is a POST form inside the user dropdown: make the button look like the template link. */
-.to-top-list form button.dropdown-item {
+/* ------------------------------------------------------------------
+ * Base text size: 14px everywhere (template default is 16px).
+ * Only the base is changed; headings and explicit size classes stay.
+ * ------------------------------------------------------------------ */
+body {
+  font-size: 0.875rem;
+}
+
+.form-control,
+.form-select,
+.bordered-table thead tr th,
+.bordered-table tbody tr td,
+div.dt-container,
+div.dt-container .dt-input {
+  font-size: 0.875rem;
+}
+
+/* The template pins placeholders to 1rem; keep them the size of the field text. */
+.form-select::placeholder,
+.form-control::placeholder,
+textarea::placeholder {
+  font-size: inherit !important;
+}
+
+/* On phones form fields stay 16px: iOS zooms the page into any smaller field. */
+@media (hover: none) and (pointer: coarse) {
+  input.form-control,
+  select.form-select,
+  textarea.form-control,
+  div.dt-container .dt-input {
+    font-size: 16px;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Top bar: only the breadcrumb trail (page heading is its last item).
+ * ------------------------------------------------------------------ */
+.panel-topbar {
+  height: auto;
+  min-height: 4.5rem;
+}
+
+.panel-breadcrumb {
+  list-style: none;
+  color: var(--text-primary-light);
+  min-width: 0;
+}
+
+.panel-breadcrumb a {
+  color: inherit;
+}
+
+.panel-breadcrumb .ph {
+  font-size: 1.4em;
+  line-height: 1;
+}
+
+.panel-breadcrumb__sep {
+  color: var(--text-secondary-light);
+  font-weight: 400;
+}
+
+/* Leave room for the fixed menu button on tablets and phones. */
+@media (max-width: 1199px) {
+  .panel-topbar {
+    padding-inline-start: 76px;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Sidebar rail: house (dashboard) on top; collapse, settings, theme and
+ * avatar at the bottom.
+ * ------------------------------------------------------------------ */
+.twin-rail .rail-home {
+  margin-bottom: 22px;
+  text-decoration: none;
+}
+
+.twin-collapse .collapse-icon-closed,
+.twin-sidebar.is-collapsed .twin-collapse .collapse-icon-open {
+  display: none;
+}
+
+.twin-sidebar.is-collapsed .twin-collapse .collapse-icon-closed {
+  display: inline;
+}
+
+/* Tablets and phones: no collapse button (the sidebar is off-canvas there), and
+   the rail starts below the fixed menu button so the house icon is not covered. */
+@media (max-width: 1199px) {
+  .twin-collapse {
+    display: none;
+  }
+  .twin-rail {
+    padding-top: 76px;
+  }
+}
+
+.rail-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+
+.rail-theme-toggle:hover {
+  background: var(--ts-hover);
+}
+
+.rail-avatar {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.twin-rail__bottom .dropdown-menu {
+  min-width: 220px;
+}
+
+/* Logout is a POST form inside the dropdown: make the button look like a link row. */
+.twin-rail__bottom form button.dropdown-item {
   width: 100%;
   background: transparent;
   border: 0;
   text-align: start;
+}
+
+/* ------------------------------------------------------------------
+ * Data tables
+ * ------------------------------------------------------------------ */
+
+/* Sort arrows sit right after the column title instead of being pinned to
+   the right edge, so they never overlap centred or right-aligned titles. */
+table.dataTable thead > tr > th span.dt-column-order {
+  position: relative;
+  display: inline-block;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  width: 10px;
+  height: 1em;
+  margin-inline-start: 6px;
+  vertical-align: middle;
+}
+
+/* DataTables right-aligns columns it detects as numbers or dates (a phone
+   number looks like a number). Alignment is set explicitly in the markup. */
+table.dataTable th.dt-type-numeric,
+table.dataTable th.dt-type-date,
+table.dataTable td.dt-type-numeric,
+table.dataTable td.dt-type-date {
+  text-align: start;
+}
+
+/* The template lets tables grow to their full content width (min-width:
+   max-content). For list tables the free-text columns should wrap instead,
+   so the fixed columns below keep their size and the rest shares the width. */
+.bordered-table[data-datatable] {
+  min-width: 0;
+}
+
+/* Fixed-width columns (the remaining width goes to columns without a class).
+   32px = cell padding, 16px = sort arrows after the title. */
+.col-actions { width: 1px; white-space: nowrap; }  /* shrink to content */
+.col-status  { width: 1px; white-space: nowrap; }  /* shrink to the badge */
+.col-count   { width: calc(5ch + 32px + 16px); white-space: nowrap; }   /* 5 digits */
+.col-nip     { width: calc(13ch + 32px + 16px); white-space: nowrap; }  /* 123-456-78-90 */
+.col-phone   { width: calc(16ch + 32px + 16px); white-space: nowrap; }  /* +48 600 000 000 */
+
+/* ------------------------------------------------------------------
+ * Copy a table cell: icon on hover (desktop), long press (touch).
+ * ------------------------------------------------------------------ */
+td.copyable {
+  position: relative;
+}
+
+.copy-cell-btn {
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--primary-600);
+  box-shadow: 0 1px 4px rgba(24, 27, 44, 0.15);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  td.copyable:hover .copy-cell-btn {
+    display: inline-flex;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  td.copyable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+td.copyable.copy-flash {
+  box-shadow: inset 0 0 0 9999px color-mix(in srgb, var(--primary-600) 10%, transparent);
+}
+
+.copy-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 2000;
+  pointer-events: none;
 }

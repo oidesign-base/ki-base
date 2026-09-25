@@ -11,7 +11,8 @@
 --     Polish local time (Europe/Warsaw).
 --   * No physical deletes for business records: deleted_at is set instead.
 --   * Schema changes go through numbered files in db/migrations/.
---     This file always reflects the result of all migrations applied.
+--     This file always reflects the result of all migrations applied
+--     (currently up to 002_supplier_contacts).
 -- =====================================================================
 
 SET NAMES utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
@@ -105,7 +106,12 @@ CREATE TABLE suppliers (
     id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
     name         VARCHAR(150) NOT NULL,
     tax_id       VARCHAR(20)  NULL COMMENT 'NIP',
-    contact      VARCHAR(255) NULL,
+    phone        VARCHAR(30)  NULL,
+    email        VARCHAR(150) NULL,
+    street       VARCHAR(200) NULL COMMENT 'Street, building and flat number',
+    postal_code  VARCHAR(12)  NULL,
+    city         VARCHAR(100) NULL,
+    country_code CHAR(2)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'PL' COMMENT 'ISO 3166-1 alpha-2',
     is_active    TINYINT(1)   NOT NULL DEFAULT 1,
     created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at   DATETIME     NULL ON UPDATE CURRENT_TIMESTAMP,
