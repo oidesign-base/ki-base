@@ -1,5 +1,5 @@
 /**
- * DataTables for every <table data-datatable>, with Ukrainian texts.
+ * DataTables for every <table data-datatable>, with Polish texts.
  * Per-table options via HTML attributes:
  *   data-page-length="25"         rows per page
  *   <th data-orderable="false">   column without sorting (e.g. actions)
@@ -8,19 +8,19 @@
 (function () {
   "use strict";
 
-  var uk = {
-    processing: "Зачекайте…",
-    search: "Пошук:",
-    lengthMenu: "_MENU_ на сторінці",
-    info: "Записи _START_–_END_ із _TOTAL_",
-    infoEmpty: "Записів немає",
-    infoFiltered: "(відібрано з _MAX_)",
-    zeroRecords: "Нічого не знайдено",
-    emptyTable: "Записів поки немає",
+  var pl = {
+    processing: "Proszę czekać…",
+    search: "Szukaj:",
+    lengthMenu: "_MENU_ na stronie",
+    info: "Pozycje _START_–_END_ z _TOTAL_",
+    infoEmpty: "Brak pozycji",
+    infoFiltered: "(przefiltrowano z _MAX_)",
+    zeroRecords: "Nic nie znaleziono",
+    emptyTable: "Na razie brak pozycji",
     paginate: { first: "«", previous: "‹", next: "›", last: "»" },
     aria: {
-      sortAscending: ": сортувати за зростанням",
-      sortDescending: ": сортувати за спаданням"
+      sortAscending: ": sortuj rosnąco",
+      sortDescending: ": sortuj malejąco"
     }
   };
 
@@ -28,7 +28,7 @@
     if (typeof DataTable === "undefined") return;
     document.querySelectorAll("table[data-datatable]").forEach(function (table) {
       new DataTable(table, {
-        language: uk,
+        language: pl,
         order: [],
         autoWidth: false,
         pageLength: parseInt(table.getAttribute("data-page-length") || "25", 10)

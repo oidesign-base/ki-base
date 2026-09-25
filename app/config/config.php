@@ -14,7 +14,7 @@ return [
         'env'      => 'production',     // production | development
         'debug'    => false,            // show error details in the browser
         'timezone' => 'Europe/Warsaw',  // display timezone; the database works in UTC
-        'locale'   => 'uk',
+        'locale'   => 'pl',
     ],
 
     'db' => [

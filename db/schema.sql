@@ -12,7 +12,7 @@
 --   * No physical deletes for business records: deleted_at is set instead.
 --   * Schema changes go through numbered files in db/migrations/.
 --     This file always reflects the result of all migrations applied
---     (currently up to 002_supplier_contacts).
+--     (currently up to 003_polish_ui).
 -- =====================================================================
 
 SET NAMES utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
@@ -123,7 +123,7 @@ CREATE TABLE suppliers (
 CREATE TABLE categories (
     id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
     parent_id    INT UNSIGNED NULL COMMENT 'Optional nesting; flat list is fine',
-    name         VARCHAR(100) NOT NULL COMMENT 'UI language (Ukrainian)',
+    name         VARCHAR(100) NOT NULL COMMENT 'UI language (Polish)',
     sort_order   SMALLINT     NOT NULL DEFAULT 0,
     is_active    TINYINT(1)   NOT NULL DEFAULT 1,
     created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,

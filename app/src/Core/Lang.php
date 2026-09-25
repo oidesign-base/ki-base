@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-/** UI strings. The interface is Ukrainian: app/lang/uk.php. */
+/** UI strings. The interface is Polish: app/lang/pl.php. */
 final class Lang
 {
     private static ?array $strings = null;
@@ -12,7 +12,7 @@ final class Lang
     public static function get(string $key, array $params = []): string
     {
         if (self::$strings === null) {
-            $file = APP_ROOT . '/lang/' . config('app.locale', 'uk') . '.php';
+            $file = APP_ROOT . '/lang/' . config('app.locale', 'pl') . '.php';
             self::$strings = is_file($file) ? require $file : [];
         }
 

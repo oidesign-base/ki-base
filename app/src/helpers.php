@@ -22,7 +22,7 @@ function e(mixed $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-/** Translate a UI string (app/lang/uk.php). Placeholders: {name}. */
+/** Translate a UI string (app/lang/pl.php). Placeholders: {name}. */
 function t(string $key, array $params = []): string
 {
     return Lang::get($key, $params);
@@ -75,7 +75,7 @@ function format_date(?string $date, string $format = 'd.m.Y'): string
     return (new DateTimeImmutable($date))->format($format);
 }
 
-/** Format a money amount the Polish/Ukrainian way: 1 234,50. */
+/** Format a money amount the Polish way: 1 234,50. */
 function format_money(float|string|null $amount, string $currency = 'PLN'): string
 {
     if ($amount === null || $amount === '') {
@@ -104,7 +104,7 @@ function field_feedback(string $field): string
     return $error === '' ? '' : '<div class="invalid-feedback d-block">' . e($error) . '</div>';
 }
 
-/** One or two letters for a user avatar: "Олексій" -> "О", "Kate Ivanova" -> "KI". */
+/** One or two letters for a user avatar: "Aleksy" -> "A", "Kate Ivanova" -> "KI". */
 function user_initials(string $name): string
 {
     $parts = preg_split('/\s+/u', trim($name), -1, PREG_SPLIT_NO_EMPTY) ?: ['?'];

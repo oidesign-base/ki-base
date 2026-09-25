@@ -3,7 +3,7 @@
  * Sidebar menu (template "twin sidebar": icon rail + menu panel).
  *
  * Each group = one rail icon + one list in the panel.
- * Labels are translation keys (app/lang/uk.php); icons are Phosphor class names.
+ * Labels are translation keys (app/lang/pl.php); icons are Phosphor class names.
  * 'position' => 'bottom' puts the rail icon at the bottom of the rail.
  * The dashboard has no menu item: it opens from the house icon at the top of the rail.
  */

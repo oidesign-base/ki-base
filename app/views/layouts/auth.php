@@ -8,7 +8,7 @@ use App\Core\View;
  */
 ?>
 <!DOCTYPE html>
-<html lang="uk" data-theme="light">
+<html lang="pl" data-theme="light">
 <head>
 <?= View::partial('partials/head', ['title' => $title ?? '']) ?>
 </head>

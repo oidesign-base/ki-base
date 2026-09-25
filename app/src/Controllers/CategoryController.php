@@ -132,7 +132,7 @@ final class CategoryController extends Controller
         } elseif (!Validate::maxLength($data['name'], 100)) {
             $errors['name'] = t('validation.max_length', ['max' => 100]);
         } else {
-            // The collation ignores case and accents, so "Одяг" = "одяг".
+            // The collation ignores case and accents, so "Odzież" = "odzież".
             $duplicate = Database::value(
                 'SELECT id FROM categories WHERE name = ? AND parent_id IS NULL AND id <> ?',
                 [$data['name'], $ignoreId ?? 0]
