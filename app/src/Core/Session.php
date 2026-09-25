@@ -99,10 +99,17 @@ final class Session
         $_SESSION['_old_input_next'] = $input;
     }
 
-    /** Called once per request: moves "next" old input into place. */
+    /** Field validation errors for the next request: ['field' => 'message']. */
+    public static function flashErrors(array $errors): void
+    {
+        $_SESSION['_errors_next'] = $errors;
+    }
+
+    /** Called once per request: moves "next" old input and errors into place. */
     public static function ageFlashInput(): void
     {
         $_SESSION['_old_input'] = $_SESSION['_old_input_next'] ?? [];
-        unset($_SESSION['_old_input_next']);
+        $_SESSION['_errors']    = $_SESSION['_errors_next'] ?? [];
+        unset($_SESSION['_old_input_next'], $_SESSION['_errors_next']);
     }
 }

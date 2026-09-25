@@ -1,4 +1,10 @@
-<?php /** @var string|null $title */ ?>
+<?php
+/**
+ * @var string|null $title
+ * @var array|null  $bundles  page asset bundles, e.g. ['datatables']
+ */
+$bundles = $bundles ?? [];
+?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
@@ -20,5 +26,8 @@
 <link rel="stylesheet" href="<?= e(asset('assets/vendor/phosphor/regular/style.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/vendor/phosphor/bold/style.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/css/lib/bootstrap.min.css')) ?>">
+<?php if (in_array('datatables', $bundles, true)): ?>
+<link rel="stylesheet" href="<?= e(asset('assets/css/lib/dataTables.min.css')) ?>">
+<?php endif; ?>
 <link rel="stylesheet" href="<?= e(asset('assets/css/style.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/css/panel.css')) ?>">

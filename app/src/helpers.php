@@ -83,3 +83,23 @@ function format_money(float|string|null $amount, string $currency = 'PLN'): stri
     }
     return number_format((float) $amount, 2, ',', "\u{00A0}") . "\u{00A0}" . $currency;
 }
+
+/** Validation error for a form field ('' when none). */
+function field_error(string $field): string
+{
+    $errors = Session::get('_errors', []);
+    return is_array($errors) && isset($errors[$field]) ? (string) $errors[$field] : '';
+}
+
+/** ' is-invalid' when the field has a validation error (Bootstrap class). */
+function invalid_class(string $field): string
+{
+    return field_error($field) !== '' ? ' is-invalid' : '';
+}
+
+/** Invalid-feedback block for a field (empty string when no error). */
+function field_feedback(string $field): string
+{
+    $error = field_error($field);
+    return $error === '' ? '' : '<div class="invalid-feedback d-block">' . e($error) . '</div>';
+}

@@ -61,6 +61,7 @@ return [
         'position' => 'bottom',
         'items'    => [
             ['path' => '/settings/categories', 'label' => 'menu.categories', 'icon' => 'ph-tag'],
+            ['path' => '/settings/suppliers',  'label' => 'menu.suppliers',  'icon' => 'ph-handshake'],
             ['path' => '/settings/platforms',  'label' => 'menu.platforms',  'icon' => 'ph-globe'],
             ['path' => '/settings/carriers',   'label' => 'menu.carriers',   'icon' => 'ph-truck'],
             ['path' => '/settings/tax',        'label' => 'menu.tax',        'icon' => 'ph-percent'],
