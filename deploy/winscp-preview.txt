@@ -10,6 +10,13 @@ option batch abort
 option confirm off
 open "ki-base"
 
+# Create the root folders on a fresh server (errors "already exists" are ignored).
+# This is the only change the preview may make: empty folders, no files.
+option batch continue
+mkdir /app
+mkdir /public
+option batch abort
+
 synchronize remote -preview -delete -filemask="| config.local.php; storage/; .gitkeep; *.log" "app" "/app"
 synchronize remote -preview -delete -filemask="| .gitkeep; *.log" "public" "/public"
 
