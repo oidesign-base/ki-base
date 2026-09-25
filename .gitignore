@@ -1,0 +1,32 @@
+# Purchased template (Envato license) - reference only, never committed
+/@template/
+
+# Local configuration with secrets (DB passwords, API tokens)
+config.local.php
+*.local.php
+.env
+.env.*
+
+# Composer dependencies are installed locally and uploaded separately
+# (uncomment if we decide not to commit vendor/)
+# /vendor/
+
+# Runtime data
+/storage/logs/
+/storage/cache/
+/storage/uploads/
+/storage/backups/
+*.log
+
+# Database dumps
+*.sql.gz
+/backups/
+
+# OS / editor files
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp
+*~
+.idea/
+.vscode/
