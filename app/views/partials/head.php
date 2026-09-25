@@ -15,6 +15,7 @@
     } catch (e) {}
   })();
 </script>
+<link rel="stylesheet" href="<?= e(asset('assets/vendor/inter/inter.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/css/remixicon.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/vendor/phosphor/regular/style.css')) ?>">
 <link rel="stylesheet" href="<?= e(asset('assets/vendor/phosphor/bold/style.css')) ?>">
