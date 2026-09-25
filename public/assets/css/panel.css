@@ -1,0 +1,12 @@
+/*
+ * KI-BASE panel: small additions on top of the template style.css.
+ * Keep this file minimal — the design comes from the template.
+ */
+
+/* Logout is a POST form inside the user dropdown: make the button look like the template link. */
+.to-top-list form button.dropdown-item {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  text-align: start;
+}

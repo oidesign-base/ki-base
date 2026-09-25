@@ -1,0 +1,16 @@
+# KI-BASE: WinSCP script (preview). Run via deploy\deploy.bat, not directly.
+# "ki-base" is the site name saved in WinSCP.
+#
+# Excluded from sync (never uploaded, never deleted on the server):
+#   config.local.php - server configuration with passwords
+#   storage/         - logs, sessions, uploaded photos, backups
+#   .gitkeep, *.log  - technical files
+
+option batch abort
+option confirm off
+open "ki-base"
+
+synchronize remote -preview -delete -filemask="| config.local.php; storage/; .gitkeep; *.log" "app" "/app"
+synchronize remote -preview -delete -filemask="| .gitkeep; *.log" "public" "/public"
+
+exit

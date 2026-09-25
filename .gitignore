@@ -9,13 +9,11 @@ config.local.php
 
 # Composer dependencies are installed locally and uploaded separately
 # (uncomment if we decide not to commit vendor/)
-# /vendor/
+# /app/vendor/
 
-# Runtime data
-/storage/logs/
-/storage/cache/
-/storage/uploads/
-/storage/backups/
+# Runtime data (folders are kept via .gitkeep)
+/app/storage/*/*
+!/app/storage/*/.gitkeep
 *.log
 
 # Database dumps

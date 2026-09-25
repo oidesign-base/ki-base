@@ -1,0 +1,3 @@
+# Application code is outside the web root. This is a second line of defence
+# in case the folder ever becomes reachable from the web.
+Require all denied

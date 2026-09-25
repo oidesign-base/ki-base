@@ -1,6 +1,9 @@
 # Normalize all text files to LF - the panel runs on a Linux server
 * text=auto eol=lf
 
+# Windows batch files must keep CRLF, otherwise cmd.exe misreads them
+*.bat text eol=crlf
+
 # Binary files
 *.png  binary
 *.jpg  binary
