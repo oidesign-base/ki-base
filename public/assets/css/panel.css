@@ -140,8 +140,12 @@ textarea::placeholder {
  * ------------------------------------------------------------------ */
 
 /* Sort arrows sit right after the column title instead of being pinned to
-   the right edge, so they never overlap centred or right-aligned titles. */
-table.dataTable thead > tr > th span.dt-column-order {
+   the right edge, so they never overlap centred or right-aligned titles.
+   The selectors repeat the DataTables ones (same specificity, loaded later). */
+table.dataTable thead > tr > th.dt-orderable-asc span.dt-column-order,
+table.dataTable thead > tr > th.dt-orderable-desc span.dt-column-order,
+table.dataTable thead > tr > th.dt-ordering-asc span.dt-column-order,
+table.dataTable thead > tr > th.dt-ordering-desc span.dt-column-order {
   position: relative;
   display: inline-block;
   top: auto;
