@@ -12,7 +12,7 @@
 --   * No physical deletes for business records: deleted_at is set instead.
 --   * Schema changes go through numbered files in db/migrations/.
 --     This file always reflects the result of all migrations applied
---     (currently up to 004_code_prefixes).
+--     (currently up to 005_code_generations).
 -- =====================================================================
 
 SET NAMES utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
@@ -332,8 +332,24 @@ CREATE TABLE product_texts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
   COMMENT='Sales descriptions per platform / language (written once per product)';
 
+CREATE TABLE code_generations (
+    id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    code_prefix_id  SMALLINT UNSIGNED NOT NULL,
+    first_code      CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    last_code       CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    codes_count     SMALLINT UNSIGNED NOT NULL,
+    created_by      INT UNSIGNED NULL,
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY ix_code_generations_prefix (code_prefix_id),
+    CONSTRAINT fk_code_generations_prefix FOREIGN KEY (code_prefix_id) REFERENCES code_prefixes (id),
+    CONSTRAINT fk_code_generations_user FOREIGN KEY (created_by) REFERENCES users (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
+  COMMENT='Label sheets generated together (one or more A4 sheets of one prefix)';
+
 CREATE TABLE code_sheets (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    generation_id INT UNSIGNED NOT NULL,
     code_prefix_id SMALLINT UNSIGNED NOT NULL,
     first_code    CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     last_code     CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
@@ -344,8 +360,10 @@ CREATE TABLE code_sheets (
     PRIMARY KEY (id),
     KEY fk_code_sheets_user (printed_by),
     KEY ix_code_sheets_prefix (code_prefix_id),
+    KEY ix_code_sheets_generation (generation_id),
     CONSTRAINT fk_code_sheets_user FOREIGN KEY (printed_by) REFERENCES users (id),
-    CONSTRAINT fk_code_sheets_prefix FOREIGN KEY (code_prefix_id) REFERENCES code_prefixes (id)
+    CONSTRAINT fk_code_sheets_prefix FOREIGN KEY (code_prefix_id) REFERENCES code_prefixes (id),
+    CONSTRAINT fk_code_sheets_generation FOREIGN KEY (generation_id) REFERENCES code_generations (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
   COMMENT='Printed A4 sheets of QR labels';
 

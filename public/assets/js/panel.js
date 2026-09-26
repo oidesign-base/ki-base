@@ -290,6 +290,66 @@
     });
   }
 
+  // ---------------------------------------------------------------
+  // Search and quick filters for a grid of cards instead of a table
+  // (e.g. label sheets). The card body carries data-filter-grid; each
+  // card is [data-grid-cell] with data-search="…" and one data-<name>
+  // attribute per filter (the toolbar control's data-filter-column is
+  // <name>). Hidden cards keep their place; a [data-grid-section]
+  // without any visible card is hidden as a whole.
+  // ---------------------------------------------------------------
+  function initGridFilters() {
+    document.querySelectorAll("[data-filter-grid]").forEach(function (grid) {
+      var card = grid.closest(".card");
+      var toolbar = card ? card.querySelector("[data-list-toolbar]") : null;
+      var cells = grid.querySelectorAll("[data-grid-cell]");
+      var info = grid.querySelector("[data-grid-info]");
+      if (!toolbar) return;
+
+      var search = toolbar.querySelector("[data-list-search]");
+      var controls = toolbar.querySelectorAll("[data-filter-column]");
+
+      function apply() {
+        var words = search ? search.value.toLowerCase().trim().split(/\s+/).filter(Boolean) : [];
+        var groups = {};
+        controls.forEach(function (el) {
+          var name = el.getAttribute("data-filter-column");
+          if (el.type === "checkbox") {
+            groups[name] = groups[name] || [];
+            if (el.checked) groups[name].push(el.value);
+          } else if (el.value !== "") {
+            groups[name] = [el.value];
+          }
+        });
+
+        var shown = 0;
+        cells.forEach(function (cell) {
+          var text = cell.getAttribute("data-search") || "";
+          var ok = words.every(function (w) { return text.indexOf(w) !== -1; });
+          Object.keys(groups).forEach(function (name) {
+            if (ok && groups[name].indexOf(cell.getAttribute("data-" + name)) === -1) ok = false;
+          });
+          cell.classList.toggle("is-filtered-out", !ok);
+          if (ok) shown++;
+        });
+
+        grid.querySelectorAll("[data-grid-section]").forEach(function (section) {
+          section.hidden = !section.querySelector("[data-grid-cell]:not(.is-filtered-out)");
+        });
+
+        if (info) {
+          var text = shown === 0 ? info.getAttribute("data-text-none")
+            : (shown === cells.length ? info.getAttribute("data-text-all") : info.getAttribute("data-text-filtered"));
+          info.textContent = text.replace("{n}", shown).replace("{m}", cells.length);
+        }
+      }
+
+      if (search) search.addEventListener("input", apply);
+      controls.forEach(function (el) { el.addEventListener("change", apply); });
+      apply();
+    });
+  }
+
   ready(function () {
     initTwinSidebar();
     initThemeToggle();
@@ -299,5 +359,6 @@
     initTooltips();
     initGoTop();
     initSelectHints();
+    initGridFilters();
   });
 })();

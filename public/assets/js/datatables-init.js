@@ -83,12 +83,19 @@
 
     // The toolbar sticks under the top bar and the table header under the
     // toolbar: expose both heights to the CSS.
+    // A table wider than the card scrolls sideways instead (then its header
+    // cannot stick: see panel.css).
     var topbar = document.querySelector(".panel-topbar");
+    var wrapper = table.closest(".table-responsive");
     function measure() {
       if (topbar) {
         document.documentElement.style.setProperty("--panel-topbar-h", topbar.offsetHeight + "px");
       }
       card.style.setProperty("--list-toolbar-h", toolbar.offsetHeight + "px");
+      if (wrapper) {
+        wrapper.classList.remove("is-scrollable");
+        wrapper.classList.toggle("is-scrollable", table.scrollWidth > wrapper.clientWidth + 1);
+      }
     }
     measure();
     window.addEventListener("resize", measure);
