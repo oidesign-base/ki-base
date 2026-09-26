@@ -243,11 +243,43 @@
     });
   }
 
+  // ---------------------------------------------------------------
+  // Bootstrap tooltips for elements with data-bs-toggle="tooltip"
+  // (as in the template's tooltip.php).
+  // ---------------------------------------------------------------
+  function initTooltips() {
+    if (typeof bootstrap === "undefined" || !bootstrap.Tooltip) return;
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+      bootstrap.Tooltip.getOrCreateInstance(el);
+    });
+  }
+
+  // ---------------------------------------------------------------
+  // "Back to top" button: shown after scrolling down one screen.
+  // ---------------------------------------------------------------
+  function initGoTop() {
+    var button = document.querySelector("[data-go-top]");
+    if (!button) return;
+
+    function update() {
+      button.classList.toggle("is-visible", window.scrollY > window.innerHeight);
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+
+    button.addEventListener("click", function () {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    });
+  }
+
   ready(function () {
     initTwinSidebar();
     initThemeToggle();
     initPasswordToggle();
     initAlerts();
     initCopyCells();
+    initTooltips();
+    initGoTop();
   });
 })();

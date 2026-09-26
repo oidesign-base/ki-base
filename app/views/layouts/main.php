@@ -30,6 +30,11 @@ use App\Core\View;
 
   </main>
 
+  <button type="button" class="go-top btn btn-primary w-44-px h-44-px p-0 radius-8 d-flex align-items-center justify-content-center"
+          data-go-top aria-label="<?= e(t('layout.go_top')) ?>" title="<?= e(t('layout.go_top')) ?>">
+    <i class="ph-bold ph-arrow-up text-xl" aria-hidden="true"></i>
+  </button>
+
 <?= View::partial('partials/scripts', ['bundles' => $scripts ?? []]) ?>
 </body>
 </html>

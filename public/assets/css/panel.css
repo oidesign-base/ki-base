@@ -233,3 +233,100 @@ td.copyable.copy-flash {
   z-index: 2000;
   pointer-events: none;
 }
+
+/* ------------------------------------------------------------------
+ * List toolbar (card header of list pages): search first, then quick
+ * filters; icon buttons on the right. Everything is 40px high
+ * (the template's h-40-px / w-40-px controls).
+ * ------------------------------------------------------------------ */
+
+/* The template hides .navbar-search below 992px (it is the top-bar search). */
+.list-toolbar .list-search {
+  display: inline-block;
+}
+
+/* Same border as the form fields; the template's white border is invisible
+   on the white card header. */
+.list-toolbar .list-search input {
+  width: 16rem;
+  max-width: 100%;
+  border-color: var(--input-form-light);
+  padding-inline-start: 1.25rem;
+  padding-inline-end: 2.75rem;
+}
+
+.list-toolbar .list-search input:focus {
+  border-color: var(--primary-600);
+  outline: 0;
+}
+
+.list-toolbar .list-search .icon {
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  inset-inline-end: 6px;
+}
+
+/* Phones: the search takes the whole width next to the buttons; filters
+   go to the next line. */
+@media (max-width: 575px) {
+  .list-toolbar {
+    flex-wrap: nowrap !important;
+    align-items: flex-start !important;
+  }
+  .list-toolbar > div:first-child {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .list-toolbar .list-search,
+  .list-toolbar .list-search input {
+    width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * Long lists on desktop: the toolbar and the table header stay visible
+ * under the top bar while scrolling. On narrower screens the table keeps
+ * its horizontal scroll wrapper, where sticky cannot work.
+ * --panel-topbar-h and --list-toolbar-h are measured in datatables-init.js.
+ * ------------------------------------------------------------------ */
+@media (min-width: 1200px) {
+  .basic-data-table .table-responsive {
+    overflow: visible;
+  }
+
+  .basic-data-table .list-toolbar {
+    position: sticky;
+    top: var(--panel-topbar-h, 4.5rem);
+    z-index: 3;
+    border-start-start-radius: 8px;
+    border-start-end-radius: 8px;
+  }
+
+  .basic-data-table table.dataTable > thead > tr > th {
+    position: sticky;
+    top: calc(var(--panel-topbar-h, 4.5rem) + var(--list-toolbar-h, 73px));
+    z-index: 2;
+  }
+}
+
+/* ------------------------------------------------------------------
+ * "Back to top" button (not in the template; built from its button
+ * classes). Appears after scrolling down one screen.
+ * ------------------------------------------------------------------ */
+.go-top {
+  position: fixed;
+  inset-inline-end: 24px;
+  bottom: 24px;
+  z-index: 1030;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.go-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}

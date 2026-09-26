@@ -37,6 +37,7 @@ return [
     'layout.breadcrumb'      => 'Nawigacja',
     'layout.theme'           => 'Motyw jasny / ciemny',
     'layout.logout'          => 'Wyloguj',
+    'layout.go_top'          => 'Do góry',
 
     // Login
     'auth.login.title'    => 'Logowanie',
@@ -95,6 +96,9 @@ return [
     'action.copy'            => 'Kopiuj',
     'action.copied'          => 'Skopiowano',
     'form.check_fields'      => 'Sprawdź zaznaczone pola.',
+    'list.search'            => 'Szukaj',
+    'filter.active'          => 'Aktywne',
+    'filter.inactive'        => 'Nieaktywne',
     'validation.required'    => 'Pole wymagane.',
     'validation.max_length'  => 'Maksymalnie {max} znaków.',
 
