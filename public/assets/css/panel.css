@@ -177,6 +177,7 @@ table.dataTable td.dt-type-date {
    32px = cell padding, 16px = sort arrows after the title. */
 .col-actions { width: 1px; white-space: nowrap; }  /* shrink to content */
 .col-status  { width: 1px; white-space: nowrap; }  /* shrink to the badge */
+.col-flag    { width: 1px; white-space: nowrap; }  /* short value or badge: shrink to content */
 .col-count   { width: calc(5ch + 32px + 16px); white-space: nowrap; }   /* 5 digits */
 .col-nip     { width: calc(13ch + 32px + 16px); white-space: nowrap; }  /* 123-456-78-90 */
 .col-phone   { width: calc(16ch + 32px + 16px); white-space: nowrap; }  /* +48 600 000 000 */
@@ -399,4 +400,11 @@ td.copyable.copy-flash {
    background, so the border and the fill merge into one shape. */
 .form-check.style-check .form-check-input:checked {
   background-color: var(--primary-600) !important;
+}
+
+/* Code prefix field: two capital letters, typed in any case. */
+.prefix-input {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  max-width: 8rem;
 }

@@ -12,7 +12,7 @@
 --   * No physical deletes for business records: deleted_at is set instead.
 --   * Schema changes go through numbered files in db/migrations/.
 --     This file always reflects the result of all migrations applied
---     (currently up to 003_polish_ui).
+--     (currently up to 004_code_prefixes).
 -- =====================================================================
 
 SET NAMES utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
@@ -186,12 +186,37 @@ CREATE TABLE nbp_rates (
   COMMENT='Cache of NBP average exchange rates (api.nbp.pl)';
 
 -- ---------------------------------------------------------------------
+-- Label code prefixes (series of QR label codes)
+-- ---------------------------------------------------------------------
+
+CREATE TABLE code_prefixes (
+    id            SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    prefix        CHAR(2)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL
+                  COMMENT 'Two capital Latin letters; cannot change once codes exist',
+    description   VARCHAR(200) NOT NULL,
+    is_default    TINYINT(1)   NOT NULL DEFAULT 0,
+    is_active     TINYINT(1)   NOT NULL DEFAULT 1,
+    default_flag  TINYINT(1)   AS (IF(is_default = 1, 1, NULL)) PERSISTENT
+                  COMMENT 'Helper for the unique key: at most one default prefix',
+    created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at    DATETIME     NULL ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_code_prefixes_prefix (prefix),
+    UNIQUE KEY uq_code_prefixes_default (default_flag),
+    CONSTRAINT ck_code_prefixes_format CHECK (prefix REGEXP '^[A-Z]{2}$'),
+    CONSTRAINT ck_code_prefixes_default_active CHECK (is_default = 0 OR is_active = 1)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
+  COMMENT='Prefixes of label codes (series); numbering is per prefix';
+
+-- ---------------------------------------------------------------------
 -- Purchasing: batches and parcels
 -- ---------------------------------------------------------------------
 
 CREATE TABLE batches (
     id                          INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     supplier_id                 INT UNSIGNED  NULL,
+    code_prefix_id              SMALLINT UNSIGNED NULL
+                                COMMENT 'Prefix of the labels used for this batch; required in the form',
     batch_date                  DATE          NOT NULL COMMENT 'Invoice date; defaults to today in the form',
     invoice_number              VARCHAR(50)   NULL,
     currency                    CHAR(3)       CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'PLN',
@@ -214,6 +239,7 @@ CREATE TABLE batches (
     KEY ix_batches_status (status),
     CONSTRAINT fk_batches_supplier FOREIGN KEY (supplier_id) REFERENCES suppliers (id),
     CONSTRAINT fk_batches_created_by FOREIGN KEY (created_by) REFERENCES users (id),
+    CONSTRAINT fk_batches_code_prefix FOREIGN KEY (code_prefix_id) REFERENCES code_prefixes (id),
     CONSTRAINT ck_batches_amounts CHECK (total_paid >= 0 AND written_off_amount >= 0 AND written_off_amount <= total_paid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
   COMMENT='Purchased batches of undelivered parcels';
@@ -308,20 +334,24 @@ CREATE TABLE product_texts (
 
 CREATE TABLE code_sheets (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    first_code    CHAR(7)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-    last_code     CHAR(7)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    code_prefix_id SMALLINT UNSIGNED NOT NULL,
+    first_code    CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    last_code     CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     codes_count   SMALLINT UNSIGNED NOT NULL,
     layout        VARCHAR(50)  NULL COMMENT 'Label sheet layout used for the PDF',
     printed_by    INT UNSIGNED NULL,
     printed_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    CONSTRAINT fk_code_sheets_user FOREIGN KEY (printed_by) REFERENCES users (id)
+    KEY fk_code_sheets_user (printed_by),
+    KEY ix_code_sheets_prefix (code_prefix_id),
+    CONSTRAINT fk_code_sheets_user FOREIGN KEY (printed_by) REFERENCES users (id),
+    CONSTRAINT fk_code_sheets_prefix FOREIGN KEY (code_prefix_id) REFERENCES code_prefixes (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
   COMMENT='Printed A4 sheets of QR labels';
 
 CREATE TABLE code_pool (
-    code          CHAR(7)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL
-                  COMMENT '6 digits + 1 check digit (EAN-style)',
+    code          CHAR(9)      CHARACTER SET ascii COLLATE ascii_bin NOT NULL
+                  COMMENT 'Prefix (2 letters) + 6 digits + Damm check digit',
     sheet_id      INT UNSIGNED NOT NULL,
     status        ENUM('free','assigned','spoiled') NOT NULL DEFAULT 'free',
     status_changed_at DATETIME NULL,
@@ -329,14 +359,14 @@ CREATE TABLE code_pool (
     KEY ix_code_pool_sheet (sheet_id),
     KEY ix_code_pool_status (status),
     CONSTRAINT fk_code_pool_sheet FOREIGN KEY (sheet_id) REFERENCES code_sheets (id),
-    CONSTRAINT ck_code_pool_format CHECK (code REGEXP '^[0-9]{7}$')
+    CONSTRAINT ck_code_pool_format CHECK (code REGEXP '^[A-Z]{2}[0-9]{7}$')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci
   COMMENT='Pre-printed label codes; an item takes a free code at unpacking';
 
 CREATE TABLE items (
     id                 INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     product_id         INT UNSIGNED  NOT NULL,
-    code               CHAR(7)       CHARACTER SET ascii COLLATE ascii_bin NULL
+    code               CHAR(9)       CHARACTER SET ascii COLLATE ascii_bin NULL
                        COMMENT 'QR label code; NULL only for deleted items (code released)',
     source             ENUM('parcel','own','purchase') NOT NULL DEFAULT 'parcel',
     parcel_id          INT UNSIGNED  NULL COMMENT 'Required when source = parcel',

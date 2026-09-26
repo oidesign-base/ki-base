@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
+use App\Controllers\CodePrefixController;
 use App\Controllers\DashboardController;
 use App\Controllers\SectionController;
 use App\Controllers\SetupController;
@@ -42,6 +43,14 @@ $router->post('/settings/suppliers', [SupplierController::class, 'store']);
 $router->get('/settings/suppliers/{id}/edit', [SupplierController::class, 'edit']);
 $router->post('/settings/suppliers/{id}', [SupplierController::class, 'update']);
 $router->post('/settings/suppliers/{id}/toggle', [SupplierController::class, 'toggle']);
+
+// Labels: code prefixes
+$router->get('/labels/prefixes', [CodePrefixController::class, 'index']);
+$router->get('/labels/prefixes/create', [CodePrefixController::class, 'create']);
+$router->post('/labels/prefixes', [CodePrefixController::class, 'store']);
+$router->get('/labels/prefixes/{id}/edit', [CodePrefixController::class, 'edit']);
+$router->post('/labels/prefixes/{id}', [CodePrefixController::class, 'update']);
+$router->post('/labels/prefixes/{id}/toggle', [CodePrefixController::class, 'toggle']);
 
 // Sections from the sidebar menu that are not built yet: placeholder pages.
 // Registered last, so a real route with the same path always wins.

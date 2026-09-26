@@ -35,7 +35,8 @@ return [
         'label' => 'menu.group.labels',
         'icon'  => 'ph-qr-code',
         'items' => [
-            ['path' => '/labels', 'label' => 'menu.labels', 'icon' => 'ph-printer'],
+            ['path' => '/labels',          'label' => 'menu.labels',        'icon' => 'ph-printer'],
+            ['path' => '/labels/prefixes', 'label' => 'menu.code_prefixes', 'icon' => 'ph-hash'],
         ],
     ],
     [
