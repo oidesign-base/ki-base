@@ -7,6 +7,8 @@
  *
  * @var string      $addUrl    "add" button target (optional)
  * @var string      $addLabel  tooltip / accessible name of the "add" button
+ * @var array       $buttons   extra icon buttons before "add", each one:
+ *     ['url' => '…', 'icon' => 'ph-printer', 'label' => '…', 'target' => '_blank' (optional)]
  * @var array       $filters   quick filters, each one:
  *     ['type' => 'check',  'column' => '.col-status', 'value' => 'active', 'label' => '…', 'checked' => true]
  *     ['type' => 'select', 'column' => '.col-category', 'label' => '…', 'options' => [value => label]]
@@ -18,6 +20,7 @@
 
 $uid     = bin2hex(random_bytes(3)); // unique ids for labels
 $filters = $filters ?? [];
+$buttons = $buttons ?? [];
 
 // Consecutive checkbox filters of the same column form one toggle-button group
 // (the template's "Checkbox & Radio Buttons", button.php).
@@ -60,6 +63,12 @@ foreach ($filters as $f) {
         <?php endforeach; ?>
     </div>
     <div class="d-flex align-items-center gap-2">
+        <?php foreach ($buttons as $btn): ?>
+        <a href="<?= e($btn['url']) ?>" class="btn btn-outline-primary-600 w-40-px h-40-px p-0 radius-8 d-flex align-items-center justify-content-center"
+           data-bs-toggle="tooltip" data-bs-placement="top" title="<?= e($btn['label']) ?>" aria-label="<?= e($btn['label']) ?>"<?= !empty($btn['target']) ? ' target="' . e($btn['target']) . '" rel="noopener"' : '' ?>>
+            <i class="ph <?= e($btn['icon']) ?> text-xl" aria-hidden="true"></i>
+        </a>
+        <?php endforeach; ?>
         <?php if (!empty($addUrl)): ?>
         <a href="<?= e($addUrl) ?>" class="btn btn-primary-600 w-40-px h-40-px p-0 radius-8 d-flex align-items-center justify-content-center"
            data-bs-toggle="tooltip" data-bs-placement="top" title="<?= e($addLabel) ?>" aria-label="<?= e($addLabel) ?>">

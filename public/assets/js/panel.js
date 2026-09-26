@@ -273,6 +273,23 @@
     });
   }
 
+  // ---------------------------------------------------------------
+  // <select data-hint-target="#id">: show the selected option's
+  // data-hint text in the target element (e.g. "next code").
+  // ---------------------------------------------------------------
+  function initSelectHints() {
+    document.querySelectorAll("select[data-hint-target]").forEach(function (select) {
+      var target = document.querySelector(select.getAttribute("data-hint-target"));
+      if (!target) return;
+      function update() {
+        var option = select.options[select.selectedIndex];
+        target.textContent = option ? (option.getAttribute("data-hint") || "") : "";
+      }
+      select.addEventListener("change", update);
+      update();
+    });
+  }
+
   ready(function () {
     initTwinSidebar();
     initThemeToggle();
@@ -281,5 +298,6 @@
     initCopyCells();
     initTooltips();
     initGoTop();
+    initSelectHints();
   });
 })();

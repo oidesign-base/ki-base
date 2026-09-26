@@ -10,6 +10,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CategoryController;
 use App\Controllers\CodePrefixController;
 use App\Controllers\DashboardController;
+use App\Controllers\LabelSheetController;
 use App\Controllers\SectionController;
 use App\Controllers\SetupController;
 use App\Controllers\SupplierController;
@@ -43,6 +44,14 @@ $router->post('/settings/suppliers', [SupplierController::class, 'store']);
 $router->get('/settings/suppliers/{id}/edit', [SupplierController::class, 'edit']);
 $router->post('/settings/suppliers/{id}', [SupplierController::class, 'update']);
 $router->post('/settings/suppliers/{id}/toggle', [SupplierController::class, 'toggle']);
+
+// Labels: code sheets
+$router->get('/labels', [LabelSheetController::class, 'index']);
+$router->get('/labels/create', [LabelSheetController::class, 'create']);
+$router->post('/labels', [LabelSheetController::class, 'store']);
+$router->get('/labels/pdf', [LabelSheetController::class, 'pdf']);
+$router->get('/labels/{id}', [LabelSheetController::class, 'show']);
+$router->post('/labels/{id}/spoil', [LabelSheetController::class, 'spoil']);
 
 // Labels: code prefixes
 $router->get('/labels/prefixes', [CodePrefixController::class, 'index']);
