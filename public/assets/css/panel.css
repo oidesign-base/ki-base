@@ -330,3 +330,73 @@ td.copyable.copy-flash {
   visibility: visible;
   transform: none;
 }
+
+/* ------------------------------------------------------------------
+ * States of toggle buttons and checkboxes (applies to every page).
+ *
+ * Toggle buttons (template: button.php, "Checkbox & Radio Buttons";
+ * .btn-check + .btn-outline-<colour>-600): the template fills a button
+ * completely on hover, so a switched-off button under the mouse looks
+ * switched on, and on touch screens the hover state stays after a tap.
+ * Here hover only tints a switched-off button, touch screens get no hover
+ * tint, and two switched-on neighbours in a group get a light divider.
+ * Ordinary action buttons keep the template behaviour.
+ * ------------------------------------------------------------------ */
+.btn-check:not(:checked) + .btn-outline-primary-600:hover {
+  background-color: color-mix(in srgb, var(--primary-600) 10%, transparent) !important;
+  color: var(--primary-600) !important;
+  border-color: var(--primary-600) !important;
+}
+
+.btn-check:not(:checked) + .btn-outline-lilac-600:hover {
+  background-color: color-mix(in srgb, var(--lilac-600) 10%, transparent) !important;
+  color: var(--lilac-600) !important;
+  border-color: var(--lilac-600) !important;
+}
+
+.btn-check:not(:checked) + .btn-outline-success-600:hover {
+  background-color: color-mix(in srgb, var(--success-600) 10%, transparent) !important;
+  color: var(--success-600) !important;
+  border-color: var(--success-600) !important;
+}
+
+.btn-check:not(:checked) + .btn-outline-info-600:hover {
+  background-color: color-mix(in srgb, var(--info-600) 10%, transparent) !important;
+  color: var(--info-600) !important;
+  border-color: var(--info-600) !important;
+}
+
+.btn-check:not(:checked) + .btn-outline-warning-600:hover {
+  background-color: color-mix(in srgb, var(--warning-600) 10%, transparent) !important;
+  color: var(--warning-600) !important;
+  border-color: var(--warning-600) !important;
+}
+
+.btn-check:not(:checked) + .btn-outline-danger-600:hover {
+  background-color: color-mix(in srgb, var(--danger-600) 10%, transparent) !important;
+  color: var(--danger-600) !important;
+  border-color: var(--danger-600) !important;
+}
+
+@media (hover: none) {
+.btn-check:not(:checked) + .btn-outline-primary-600:hover,
+.btn-check:not(:checked) + .btn-outline-lilac-600:hover,
+.btn-check:not(:checked) + .btn-outline-success-600:hover,
+.btn-check:not(:checked) + .btn-outline-info-600:hover,
+.btn-check:not(:checked) + .btn-outline-warning-600:hover,
+.btn-check:not(:checked) + .btn-outline-danger-600:hover {
+    background-color: transparent !important;
+  }
+}
+
+.btn-group > .btn-check:checked + .btn + .btn-check:checked + .btn {
+  border-inline-start-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Checkboxes (.form-check.style-check): the template paints the checked
+   fill as a separate layer inside the border; where the two rounded edges
+   meet, light seams show at the corners. The box itself now gets the same
+   background, so the border and the fill merge into one shape. */
+.form-check.style-check .form-check-input:checked {
+  background-color: var(--primary-600) !important;
+}

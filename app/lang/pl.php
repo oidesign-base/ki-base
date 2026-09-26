@@ -97,6 +97,7 @@ return [
     'action.copied'          => 'Skopiowano',
     'form.check_fields'      => 'Sprawdź zaznaczone pola.',
     'list.search'            => 'Szukaj',
+    'list.filters'           => 'Filtry',
     'filter.active'          => 'Aktywne',
     'filter.inactive'        => 'Nieaktywne',
     'validation.required'    => 'Pole wymagane.',
